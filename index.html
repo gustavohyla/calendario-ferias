@@ -631,20 +631,27 @@ const COLABORADORES = [
   "ANDERSON JUNIOR DE CASTRO","ELISANGELA MOREIRA DE LIMA","JOSE LUIZ DOS SANTOS"
 ];
 
+const STORAGE_KEY = 'ferias_2026_backup';
 let records = [];
 let activeFilter = 'todos';
 let acHighlight = -1;
 let saving = false;
 
-// ── API ──
+// ── API com fallback para localStorage ──
 async function loadRecords() {
+  showLoading(true);
   try {
-    showLoading(true);
     const res = await fetch('/api/get-ferias');
-    records = await res.json();
+    if (res.ok) {
+      const data = await res.json();
+      records = Array.isArray(data) ? data : [];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    } else {
+      throw new Error('API indisponível');
+    }
   } catch (e) {
-    showToast('Erro ao carregar dados. Verifique a conexão.', 'error');
-    records = [];
+    // fallback para localStorage
+    records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
   } finally {
     showLoading(false);
     renderAll();
@@ -652,16 +659,20 @@ async function loadRecords() {
 }
 
 async function save() {
+  // salva imediatamente no localStorage
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+  // envia para API em background
   if (saving) return;
   saving = true;
   try {
-    await fetch('/api/save-ferias', {
+    const res = await fetch('/api/save-ferias', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(records)
     });
+    if (!res.ok) throw new Error('Falha ao salvar na API');
   } catch (e) {
-    showToast('Erro ao salvar. Verifique a conexão.', 'error');
+    // silencioso — localStorage já salvou
   } finally {
     saving = false;
   }
