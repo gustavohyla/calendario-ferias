@@ -517,8 +517,8 @@
               <span class="radio-dot"></span> Sim
             </label>
             <label class="radio-option">
-              <input type="radio" name="decimo" value="Não" checked>
-              <span class="radio-dot"></span> Não
+              <input type="radio" name="decimo" value="Nao" checked>
+              <span class="radio-dot"></span> N&atilde;o
             </label>
           </div>
         </div>
@@ -687,12 +687,12 @@ function addRecord() {
   const supervisor = document.getElementById('f-supervisor').value;
   const mes = document.getElementById('f-mes').value;
   const dias = parseInt(document.getElementById('f-dias').value);
-  const decimo = document.querySelector('input[name="decimo"]:checked')?.value || 'Não';
+  const decimo = document.querySelector('input[name="decimo"]:checked')?.value || 'Nao';
 
   if (!nome) return showToast('Informe o nome completo.', 'error');
   if (!supervisor) return showToast('Selecione o supervisor.', 'error');
   if (!mes) return showToast('Selecione o mês.', 'error');
-  if (!dias || dias < 1 || dias > 30) return showToast('Informe um número de dias válido (1–30).', 'error');
+  if (!dias || dias < 1 || dias > 30) return showToast('Informe um numero de dias valido (1-30).', 'error');
 
   records.push({ id: Date.now(), nome, supervisor, mes, dias, decimo });
   save(); renderAll(); resetForm(); closeAC();
@@ -875,7 +875,7 @@ function resetForm() {
   document.getElementById('f-supervisor').value = '';
   document.getElementById('f-mes').value = '';
   document.getElementById('f-dias').value = '';
-  document.querySelector('input[name="decimo"][value="Não"]').checked = true;
+  document.querySelector('input[name="decimo"][value="Nao"]').checked = true;
 }
 
 document.addEventListener('keydown', e => {
