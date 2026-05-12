@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendário de Férias 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow: #FFC324;
+    --blue: #153C8B;
+    --red: #CA003E;
+    --blue-dark: #0d2a63;
+    --red-dark: #96002d;
+    --bg: #f0f3f9;
+    --surface: #ffffff;
+    --border: #d5dcea;
+    --text: #0f1c3f;
+    --muted: #6b7a9a;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    align-items: stretch;
+    height: 64px;
+    box-shadow: 0 2px 16px rgba(21,60,139,.28);
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    overflow: hidden;
+  }
+  .header-blue {
+    background: var(--blue);
+    display: flex;
+    align-items: center;
+    padding: 0 28px;
+    gap: 14px;
+    flex: 1;
+    clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 100%, 0 100%);
+  }
+  .header-red {
+    background: var(--red);
+    display: flex;
+    align-items: center;
+    padding: 0 28px 0 38px;
+    gap: 10px;
+    min-width: 260px;
+  }
+  .header-badge {
+    background: var(--yellow);
+    color: var(--blue);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: .7rem;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .header-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.35rem;
+    letter-spacing: .5px;
+    color: #fff;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .header-title span { color: var(--yellow); }
+  .header-actions { display: flex; gap: 10px; align-items: center; }
+
+  /* BUTTONS */
+  .btn {
+    padding: 9px 20px;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Barlow', sans-serif;
+    font-size: .875rem;
+    font-weight: 600;
+    transition: all .16s;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+  }
+  .btn-yellow { background: var(--yellow); color: var(--blue); }
+  .btn-yellow:hover { background: #e6af1f; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,195,36,.35); }
+  .btn-outline { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.4); }
+  .btn-outline:hover { background: rgba(255,255,255,.12); border-color: #fff; }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-red:hover { background: var(--red-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(202,0,62,.3); }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1.5px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--red); color: var(--red); }
+  .btn-sm { padding: 6px 13px; font-size: .8rem; }
+
+  /* LAYOUT */
+  .app { display: flex; min-height: calc(100vh - 64px); }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 320px;
+    min-width: 320px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: calc(100vh - 64px);
+    position: sticky;
+    top: 64px;
+  }
+  .sidebar-top {
+    background: var(--red);
+    padding: 16px 24px;
+    flex-shrink: 0;
+  }
+  .sidebar-top-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #fff;
+  }
+  .sidebar-top-sub { font-size: .78rem; color: rgba(255,255,255,.7); margin-top: 2px; }
+  .sidebar-body { padding: 20px 24px; flex: 1; display: flex; flex-direction: column; gap: 18px; }
+  .sidebar-section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: .75rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  /* FORM */
+  .form-group { margin-bottom: 13px; }
+  .form-group label {
+    display: block;
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .form-group label .req { color: var(--red); margin-left: 2px; }
+  .form-control {
+    width: 100%;
+    padding: 10px 13px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    font-family: 'Barlow', sans-serif;
+    font-size: .9rem;
+    color: var(--text);
+    background: #fafbfd;
+    transition: border-color .15s, box-shadow .15s;
+    outline: none;
+  }
+  .form-control:focus {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(202,0,62,.1);
+    background: #fff;
+  }
+  select.form-control { cursor: pointer; }
+
+  /* AUTOCOMPLETE */
+  .autocomplete-wrap { position: relative; }
+  .autocomplete-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0; right: 0;
+    background: #fff;
+    border: 1.5px solid var(--red);
+    border-radius: 7px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    display: none;
+  }
+  .autocomplete-dropdown.open { display: block; }
+  .ac-item {
+    padding: 9px 13px;
+    font-size: .85rem;
+    cursor: pointer;
+    transition: background .1s;
+    border-bottom: 1px solid #f0f3f9;
+  }
+  .ac-item:last-child { border-bottom: none; }
+  .ac-item:hover, .ac-item.highlighted { background: #fff0f5; color: var(--red); font-weight: 600; }
+  .ac-item mark { background: var(--yellow); color: var(--blue); border-radius: 2px; padding: 0 2px; font-weight: 700; font-style: normal; }
+
+  /* RADIO */
+  .radio-group { display: flex; gap: 10px; }
+  .radio-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: .875rem;
+    font-weight: 600;
+    transition: all .15s;
+    background: #fafbfd;
+  }
+  .radio-option:has(input:checked) { border-color: var(--red); background: #fff0f5; color: var(--red); }
+  .radio-option input { display: none; }
+  .radio-dot {
+    width: 14px; height: 14px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    transition: all .15s;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .radio-option:has(input:checked) .radio-dot {
+    border-color: var(--red);
+    background: var(--red);
+    box-shadow: inset 0 0 0 2px #fff;
+  }
+
+  /* FILTERS */
+  .filter-row { display: flex; gap: 7px; flex-wrap: wrap; }
+  .filter-chip {
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: #fafbfd;
+    font-size: .78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    color: var(--muted);
+  }
+  .filter-chip:hover { border-color: var(--red); color: var(--red); }
+  .filter-chip.active { background: var(--red); border-color: var(--red); color: #fff; }
+
+  .divider { height: 1px; background: var(--border); margin: 4px 0 14px; }
+
+  /* MAIN */
+  .main { flex: 1; padding: 28px 32px; overflow-y: auto; }
+
+  /* STATS */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: flex; flex-direction: column; gap: 4px;
+    border-top: 3px solid var(--blue);
+    transition: box-shadow .15s, transform .15s;
+  }
+  .stat-card:hover { box-shadow: 0 4px 16px rgba(21,60,139,.1); transform: translateY(-2px); }
+  .stat-card.s-red { border-top-color: var(--red); }
+  .stat-card.s-yellow { border-top-color: var(--yellow); }
+  .stat-card.s-green { border-top-color: #16a34a; }
+  .stat-label { font-size: .72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .stat-value { font-family: 'Barlow Condensed', sans-serif; font-size: 2.2rem; font-weight: 800; color: var(--blue); line-height: 1; }
+  .stat-card.s-red .stat-value { color: var(--red); }
+  .stat-card.s-yellow .stat-value { color: #92620a; }
+  .stat-card.s-green .stat-value { color: #166534; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: #e0e5f0; border-radius: 9px; padding: 4px; width: fit-content; }
+  .tab {
+    padding: 8px 20px; border-radius: 6px; border: none; background: transparent;
+    font-family: 'Barlow', sans-serif; font-size: .875rem; font-weight: 600;
+    cursor: pointer; color: var(--muted); transition: all .15s;
+  }
+  .tab.active { background: #fff; color: var(--red); box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* SECTION HEADER */
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800; font-size: 1.15rem;
+    text-transform: uppercase; letter-spacing: .5px;
+    color: var(--blue);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::before {
+    content: ''; display: block;
+    width: 4px; height: 20px;
+    background: var(--red); border-radius: 2px;
+  }
+
+  /* TABLE */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: linear-gradient(90deg, var(--blue) 55%, var(--red) 100%); }
+  thead th {
+    padding: 13px 16px; text-align: left;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .8rem; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: rgba(255,255,255,.9); white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fdf0f4; }
+  tbody td { padding: 12px 16px; font-size: .9rem; }
+  .td-name { font-weight: 700; color: var(--text); }
+  .td-supervisor { color: var(--muted); font-size: .82rem; }
+
+  /* BADGES */
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: .72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .5px;
+  }
+  .badge-yes { background: #fff0f4; color: var(--red); border: 1px solid #fcc; }
+  .badge-no { background: #f1f5f9; color: var(--muted); border: 1px solid var(--border); }
+  .mes-tag {
+    display: inline-block; padding: 3px 10px; border-radius: 5px;
+    font-size: .78rem; font-weight: 700;
+    background: #eef2fb; color: var(--blue);
+    text-transform: uppercase; letter-spacing: .5px;
+    border: 1px solid #c5d0ea;
+  }
+
+  .action-btn {
+    background: none; border: none; cursor: pointer;
+    padding: 5px 7px; border-radius: 5px;
+    transition: background .12s; color: var(--muted); font-size: 1rem;
+  }
+  .action-btn:hover { background: #fee2e9; color: var(--red); }
+
+  /* CALENDAR */
+  .cal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .cal-month {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: box-shadow .15s, transform .15s;
+  }
+  .cal-month:hover { box-shadow: 0 4px 16px rgba(202,0,62,.1); transform: translateY(-2px); }
+  .cal-month-header { padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .cal-month:nth-child(odd) .cal-month-header { background: var(--blue); }
+  .cal-month:nth-child(even) .cal-month-header { background: var(--red); }
+  .cal-month-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800; font-size: 1rem;
+    letter-spacing: 1px; text-transform: uppercase; color: #fff;
+  }
+  .cal-count { background: var(--yellow); color: var(--blue); font-size: .7rem; font-weight: 800; padding: 2px 8px; border-radius: 10px; }
+  .cal-month-body { padding: 12px; }
+  .cal-entry {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 10px; border-radius: 6px; margin-bottom: 5px;
+    background: #f5f7fd; transition: background .12s;
+  }
+  .cal-month:nth-child(odd) .cal-entry { border-left: 3px solid var(--blue); }
+  .cal-month:nth-child(even) .cal-entry { border-left: 3px solid var(--red); }
+  .cal-entry:hover { background: #fdf0f4; }
+  .cal-entry:last-child { margin-bottom: 0; }
+  .cal-entry-name { font-size: .83rem; font-weight: 600; color: var(--text); }
+  .cal-entry-days { font-size: .75rem; font-weight: 700; color: var(--muted); }
+  .cal-empty { padding: 16px; text-align: center; color: var(--muted); font-size: .85rem; }
+
+  /* EMPTY */
+  .empty-state { text-align: center; padding: 48px 20px; color: var(--muted); }
+  .empty-icon { font-size: 2.5rem; margin-bottom: 10px; }
+  .empty-title { font-weight: 700; font-size: 1rem; color: var(--text); margin-bottom: 6px; }
+  .empty-sub { font-size: .875rem; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 28px; right: 28px;
+    background: var(--blue); color: #fff;
+    padding: 13px 20px; border-radius: 9px;
+    font-size: .9rem; font-weight: 600;
+    box-shadow: 0 8px 24px rgba(21,60,139,.3);
+    display: flex; align-items: center; gap: 9px;
+    z-index: 999;
+    transform: translateY(80px); opacity: 0;
+    transition: all .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { background: #166534; }
+  .toast.error { background: var(--red); }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(15,28,63,.5); backdrop-filter: blur(3px);
+    z-index: 300; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--surface); border-radius: 14px; padding: 28px;
+    width: 460px; max-width: 95vw;
+    transform: scale(.95); transition: transform .2s;
+    box-shadow: 0 20px 60px rgba(15,28,63,.25);
+    border-top: 4px solid var(--red);
+  }
+  .modal-overlay.open .modal { transform: scale(1); }
+  .modal-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800; font-size: 1.2rem;
+    text-transform: uppercase; color: var(--red); margin-bottom: 14px;
+  }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
+
+  @keyframes loadbar {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  @media (max-width: 1100px) {
+    .stats-row { grid-template-columns: repeat(2,1fr); }
+    .cal-grid { grid-template-columns: repeat(2,1fr); }
+  }
+  @media (max-width: 800px) {
+    .app { flex-direction: column; }
+    .sidebar { width: 100%; min-width: unset; position: static; max-height: unset; }
+    .header-red { min-width: unset; }
+    .main { padding: 20px 16px; }
+    .stats-row { grid-template-columns: repeat(2,1fr); }
+    .cal-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loading-bar" style="display:none;position:fixed;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--red),var(--yellow),var(--red));background-size:200% 100%;animation:loadbar 1.2s linear infinite;z-index:999"></div>
+
+<header>
+  <div class="header-blue">
+    <div class="header-badge">2026</div>
+    <div class="header-title">Calendário de <span>Férias</span></div>
+  </div>
+  <div class="header-red">
+    <div class="header-actions">
+      <button class="btn btn-outline btn-sm" onclick="exportXLSX()">⬇ Exportar XLSX</button>
+      <button class="btn btn-yellow btn-sm" onclick="copyTable()">📋 Copiar Tabela</button>
+    </div>
+  </div>
+</header>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-top-title">Novo Registro</div>
+      <div class="sidebar-top-sub">Preencha os dados e adicione ao calendário</div>
+    </div>
+    <div class="sidebar-body">
+      <div>
+        <div class="form-group">
+          <label>Nome Completo <span class="req">*</span></label>
+          <div class="autocomplete-wrap">
+            <input type="text" id="f-nome" class="form-control" placeholder="Digite para buscar..." autocomplete="off"
+              oninput="acInput(this)" onkeydown="acKeyDown(event)">
+            <div class="autocomplete-dropdown" id="ac-dropdown"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Supervisor <span class="req">*</span></label>
+          <select id="f-supervisor" class="form-control">
+            <option value="">Selecione...</option>
+            <option>Eduardo Barbosa dos Santos</option>
+            <option>Gabriel Alves Campos</option>
+            <option>Gustavo Gregorio Hyla Mombach</option>
+            <option>Gustavo Henrique Tardivo Teixeira</option>
+            <option>Mariangela de Oliveira</option>
+            <option>Rejane Zettel</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Mês das Férias <span class="req">*</span></label>
+          <select id="f-mes" class="form-control">
+            <option value="">Selecione...</option>
+            <option>Janeiro</option><option>Fevereiro</option><option>Março</option>
+            <option>Abril</option><option>Maio</option><option>Junho</option>
+            <option>Julho</option><option>Agosto</option><option>Setembro</option>
+            <option>Outubro</option><option>Novembro</option><option>Dezembro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Número de Dias <span class="req">*</span></label>
+          <input type="number" id="f-dias" class="form-control" placeholder="Ex: 30" min="1" max="30">
+        </div>
+        <div class="form-group">
+          <label>Adiantamento de Décimo <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="decimo" value="Sim">
+              <span class="radio-dot"></span> Sim
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="decimo" value="Não" checked>
+              <span class="radio-dot"></span> Não
+            </label>
+          </div>
+        </div>
+        <button class="btn btn-red" style="width:100%;justify-content:center;margin-top:4px" onclick="addRecord()">
+          + Adicionar Registro
+        </button>
+      </div>
+
+      <div>
+        <div class="sidebar-section-title">Filtrar por Supervisor</div>
+        <div class="divider"></div>
+        <div class="filter-row">
+          <span class="filter-chip active" data-val="todos" onclick="setFilter(this)">Todos</span>
+          <span class="filter-chip" data-val="Eduardo Barbosa dos Santos" onclick="setFilter(this)">Eduardo</span>
+          <span class="filter-chip" data-val="Gabriel Alves Campos" onclick="setFilter(this)">Gabriel</span>
+          <span class="filter-chip" data-val="Gustavo Gregorio Hyla Mombach" onclick="setFilter(this)">G. Mombach</span>
+          <span class="filter-chip" data-val="Gustavo Henrique Tardivo Teixeira" onclick="setFilter(this)">G. Tardivo</span>
+          <span class="filter-chip" data-val="Mariangela de Oliveira" onclick="setFilter(this)">Mariangela</span>
+          <span class="filter-chip" data-val="Rejane Zettel" onclick="setFilter(this)">Rejane</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="stats-row" id="stats-row"></div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchView('tabela', this)">📋 Tabela</button>
+      <button class="tab" onclick="switchView('calendario', this)">📅 Calendário</button>
+    </div>
+
+    <div class="view active" id="view-tabela">
+      <div class="section-header">
+        <div class="section-title">Registros de Férias</div>
+        <button class="btn btn-ghost btn-sm" onclick="confirmClearAll()">🗑 Limpar Tudo</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Nome Completo</th><th>Supervisor</th>
+              <th>Mês</th><th>Dias</th><th>Adiant. Décimo</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="view" id="view-calendario">
+      <div class="section-header">
+        <div class="section-title">Visão por Mês</div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+  </main>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-delete">
+  <div class="modal">
+    <div class="modal-title">⚠️ Confirmar Exclusão</div>
+    <p style="font-size:.9rem;color:var(--muted)">Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-delete')">Cancelar</button>
+      <button class="btn btn-red" id="confirm-delete-btn">Excluir</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-clear">
+  <div class="modal">
+    <div class="modal-title">⚠️ Limpar Todos os Registros</div>
+    <p style="font-size:.9rem;color:var(--muted)">Isso irá remover <strong>todos</strong> os registros. Esta ação não pode ser desfeita.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-clear')">Cancelar</button>
+      <button class="btn btn-red" onclick="clearAll()">Limpar Tudo</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+const COLABORADORES = [
+  "VALDILENE ALMEIDA DA GUIA BITTENCOURT","ALEX DE OLIVEIRA","MARCIO GUIMARAES DOS SANTOS",
+  "LUCIO HENRIQUE MATIAS","ANA KELLY RIBEIRO DA SILVA","JANE DE LURDES BARBOZA",
+  "RODRIGO BENITES MIRANDA","REJANE ZETTEL","NICOLY MIRANDA DE LIMA",
+  "MATEUS EDUARDO BARBOSA LUIZ","EMILLY FERREIRA BUENO CANDATTEN",
+  "CARLA CRISTIANE BAERLE DE ARAUJO","MARIANGELA DE OLIVEIRA","ELEN POLIANE DE OLIVEIRA",
+  "GUSTAVO SOUZA DA CONCEICAO","GYOVANA OLIVEIRA FARIA","ERIVELTON DE LIMA",
+  "ANGELICA CRISTINA CEBRIAN PEREIRA DOS SANTOS","LUANA SOUZA FONTES",
+  "KELVYN DOMINGUES LEANDRO","DAVID ALLAN MARCONDES BARBOSA ALVES","ABNER TAVARES DA COSTA",
+  "JANAINA GOMES DOS SANTOS","MARIA APARECIDA DE SOUZA","LUCAS HENRIQUE VIEIRA DE LIMA",
+  "LHUANY THAYSLA BARRETOS DA SILVA","ROSELI FERREIRA","ALIFER UKAN SOARES",
+  "MATHEUS VINICIUS PEREIRA","GABRIEL ALVES CAMPOS","ELISANGELA CELESTINO RIBEIRO",
+  "JOAO HENRIQUE DOS SANTOS SILVA","RYAN CORREA MAGALHAES","SILVIA MARA RAUPP",
+  "LUCELIA CAMPOS COELHO","BIANCA PADILHA GORTE","EDUARDO ISSO DE MORAIS",
+  "JOECELAINE FRANCO PAES","SIDNEI COSTA","NYCOLAS TORRES MIRANDA","LUCIMARA ALVES",
+  "MAIKON CRISTIAN PIRES","ANTHONY DANIEL BASTARDO GIL","PAULO HENRIQUE DA SILVA",
+  "JANAINA FORMONTE SCHELECHETING","ALESSANDRO DIVINO DA SILVA","ADENILSON CARRIEL ROSA",
+  "GUSTAVO GREGORIO HYLA MOMBACH","FELIPE OLIVEIRA DA MATA","DAYANE CRISTINA SAMPAIO PINHO",
+  "EDUARDO BARBOSA DOS SANTOS","EZEQUIEL BATISTA ACHOA","HELOISA ALVES DA SILVA",
+  "MARIANA GOMES BARBOSA","RAFAEL CRISTIANO CANDIDO DIAS DA ROSA",
+  "GUSTAVO HENRIQUE TARDIVO TEIXEIRA","VALZI NUNES FERREIRA","CARLA ANDREA VIEIRA DOS SANTOS",
+  "JURANDIR BATISTA DE LIMA","AMANDA MARIA GABRIEL DE ABREU","MARIZETE DE FATIMA MIRANDA",
+  "ANDERSON JUNIOR DE CASTRO","ELISANGELA MOREIRA DE LIMA","JOSE LUIZ DOS SANTOS"
+];
+
+let records = [];
+let activeFilter = 'todos';
+let acHighlight = -1;
+let saving = false;
+
+// ── API ──
+async function loadRecords() {
+  try {
+    showLoading(true);
+    const res = await fetch('/api/get-ferias');
+    records = await res.json();
+  } catch (e) {
+    showToast('Erro ao carregar dados. Verifique a conexão.', 'error');
+    records = [];
+  } finally {
+    showLoading(false);
+    renderAll();
+  }
+}
+
+async function save() {
+  if (saving) return;
+  saving = true;
+  try {
+    await fetch('/api/save-ferias', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(records)
+    });
+  } catch (e) {
+    showToast('Erro ao salvar. Verifique a conexão.', 'error');
+  } finally {
+    saving = false;
+  }
+}
+
+function showLoading(show) {
+  document.getElementById('loading-bar').style.display = show ? 'block' : 'none';
+}
+
+function addRecord() {
+  const nome = document.getElementById('f-nome').value.trim().toUpperCase();
+  const supervisor = document.getElementById('f-supervisor').value;
+  const mes = document.getElementById('f-mes').value;
+  const dias = parseInt(document.getElementById('f-dias').value);
+  const decimo = document.querySelector('input[name="decimo"]:checked')?.value || 'Não';
+
+  if (!nome) return showToast('Informe o nome completo.', 'error');
+  if (!supervisor) return showToast('Selecione o supervisor.', 'error');
+  if (!mes) return showToast('Selecione o mês.', 'error');
+  if (!dias || dias < 1 || dias > 30) return showToast('Informe um número de dias válido (1–30).', 'error');
+
+  records.push({ id: Date.now(), nome, supervisor, mes, dias, decimo });
+  save(); renderAll(); resetForm(); closeAC();
+  showToast('Registro adicionado com sucesso!', 'success');
+}
+
+function askDelete(id) {
+  document.getElementById('confirm-delete-btn').onclick = () => {
+    records = records.filter(r => r.id !== id);
+    save(); renderAll();
+    closeModal('modal-delete');
+    showToast('Registro excluído.', 'success');
+  };
+  openModal('modal-delete');
+}
+
+function confirmClearAll() { openModal('modal-clear'); }
+function clearAll() {
+  records = []; save(); renderAll();
+  closeModal('modal-clear');
+  showToast('Todos os registros foram removidos.', 'success');
+}
+
+function setFilter(el) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  activeFilter = el.dataset.val;
+  renderAll();
+}
+function filtered() {
+  return activeFilter === 'todos' ? records : records.filter(r => r.supervisor === activeFilter);
+}
+
+// AUTOCOMPLETE
+function acInput(input) {
+  const q = input.value.trim().toUpperCase();
+  const dd = document.getElementById('ac-dropdown');
+  acHighlight = -1;
+  if (!q || q.length < 2) { dd.classList.remove('open'); dd.innerHTML = ''; return; }
+  const matches = COLABORADORES.filter(n => n.includes(q)).slice(0, 8);
+  if (!matches.length) { dd.classList.remove('open'); dd.innerHTML = ''; return; }
+  dd.innerHTML = matches.map((n, i) => {
+    const hi = n.replace(q, `<mark>${q}</mark>`);
+    return `<div class="ac-item" data-idx="${i}" onmousedown="acSelect('${n.replace(/'/g,"\\'")}')"> ${hi} </div>`;
+  }).join('');
+  dd.classList.add('open');
+}
+
+function acSelect(name) {
+  document.getElementById('f-nome').value = name;
+  closeAC();
+}
+
+function acKeyDown(e) {
+  const dd = document.getElementById('ac-dropdown');
+  const items = dd.querySelectorAll('.ac-item');
+  if (!dd.classList.contains('open')) return;
+  if (e.key === 'ArrowDown') { acHighlight = Math.min(acHighlight + 1, items.length - 1); }
+  else if (e.key === 'ArrowUp') { acHighlight = Math.max(acHighlight - 1, 0); }
+  else if (e.key === 'Enter' && acHighlight >= 0) { e.preventDefault(); items[acHighlight].dispatchEvent(new MouseEvent('mousedown')); return; }
+  else if (e.key === 'Escape') { closeAC(); return; }
+  else return;
+  items.forEach((item, i) => item.classList.toggle('highlighted', i === acHighlight));
+}
+
+function closeAC() {
+  const dd = document.getElementById('ac-dropdown');
+  dd.classList.remove('open'); dd.innerHTML = '';
+}
+document.addEventListener('click', e => { if (!e.target.closest('.autocomplete-wrap')) closeAC(); });
+
+// RENDER
+function renderAll() { renderStats(); renderTable(); renderCalendar(); }
+
+function renderStats() {
+  const all = records, f = filtered();
+  const comDecimo = all.filter(r => r.decimo === 'Sim').length;
+  const mesesAtivos = [...new Set(all.map(r => r.mes))].length;
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Registros</div><div class="stat-value">${all.length}</div></div>
+    <div class="stat-card s-red"><div class="stat-label">Exibindo</div><div class="stat-value">${f.length}</div></div>
+    <div class="stat-card s-green"><div class="stat-label">Com Adiant. Décimo</div><div class="stat-value">${comDecimo}</div></div>
+    <div class="stat-card s-yellow"><div class="stat-label">Meses Cobertos</div><div class="stat-value">${mesesAtivos}</div></div>
+  `;
+}
+
+function renderTable() {
+  const data = filtered();
+  const tbody = document.getElementById('table-body');
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <div class="empty-title">Nenhum registro encontrado</div>
+      <div class="empty-sub">Adicione férias pelo formulário ao lado.</div>
+    </div></td></tr>`;
+    return;
+  }
+  const sorted = [...data].sort((a,b) => MESES.indexOf(a.mes) - MESES.indexOf(b.mes));
+  tbody.innerHTML = sorted.map((r, i) => `
+    <tr>
+      <td style="color:var(--muted);font-size:.8rem;font-weight:700">${i+1}</td>
+      <td class="td-name">${r.nome}</td>
+      <td class="td-supervisor">${r.supervisor}</td>
+      <td><span class="mes-tag">${r.mes}</span></td>
+      <td style="font-weight:700">${r.dias}d</td>
+      <td><span class="badge ${r.decimo==='Sim'?'badge-yes':'badge-no'}">${r.decimo}</span></td>
+      <td><button class="action-btn" title="Excluir" onclick="askDelete(${r.id})">🗑</button></td>
+    </tr>
+  `).join('');
+}
+
+function renderCalendar() {
+  const data = filtered();
+  document.getElementById('cal-grid').innerHTML = MESES.map(mes => {
+    const entries = data.filter(r => r.mes === mes);
+    const body = entries.length
+      ? entries.map(r => `
+        <div class="cal-entry">
+          <div>
+            <div class="cal-entry-name">${r.nome}</div>
+            <div style="font-size:.72rem;color:var(--muted);margin-top:1px">${r.supervisor.split(' ')[0]}</div>
+          </div>
+          <div class="cal-entry-days">${r.dias}d</div>
+        </div>`).join('')
+      : `<div class="cal-empty">Sem registros</div>`;
+    return `<div class="cal-month">
+      <div class="cal-month-header">
+        <div class="cal-month-name">${mes}</div>
+        ${entries.length ? `<div class="cal-count">${entries.length}</div>` : ''}
+      </div>
+      <div class="cal-month-body">${body}</div>
+    </div>`;
+  }).join('');
+}
+
+function exportXLSX() {
+  if (!records.length) return showToast('Nenhum registro para exportar.', 'error');
+  const sorted = [...records].sort((a,b) => MESES.indexOf(a.mes) - MESES.indexOf(b.mes));
+  const data = [
+    ['Nome Completo','Supervisor','Mês','Nº de Dias','Adiantamento de Décimo'],
+    ...sorted.map(r => [r.nome, r.supervisor, r.mes, r.dias, r.decimo])
+  ];
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols'] = [{wch:42},{wch:36},{wch:13},{wch:12},{wch:24}];
+  XLSX.utils.book_append_sheet(wb, ws, 'Férias 2026');
+  XLSX.writeFile(wb, 'calendario_ferias_2026.xlsx');
+  showToast('Arquivo XLSX exportado!', 'success');
+}
+
+function copyTable() {
+  if (!records.length) return showToast('Nenhum registro para copiar.', 'error');
+  const sorted = [...records].sort((a,b) => MESES.indexOf(a.mes) - MESES.indexOf(b.mes));
+  const rows = sorted.map(r => `${r.nome}\t${r.supervisor}\t${r.mes}\t${r.dias}\t${r.decimo}`);
+  navigator.clipboard.writeText(['Nome Completo\tSupervisor\tMês\tNº de Dias\tAdiantamento de Décimo', ...rows].join('\n'))
+    .then(() => showToast('Tabela copiada! Cole no Excel.', 'success'))
+    .catch(() => showToast('Erro ao copiar. Use Exportar XLSX.', 'error'));
+}
+
+function switchView(id, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function showToast(msg, type = 'default') {
+  const t = document.getElementById('toast');
+  t.className = 'toast ' + type;
+  t.innerHTML = (type==='success'?'✅ ':type==='error'?'❌ ':'ℹ️ ') + msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+function resetForm() {
+  document.getElementById('f-nome').value = '';
+  document.getElementById('f-supervisor').value = '';
+  document.getElementById('f-mes').value = '';
+  document.getElementById('f-dias').value = '';
+  document.querySelector('input[name="decimo"][value="Não"]').checked = true;
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !document.getElementById('ac-dropdown').classList.contains('open')) {
+    if (document.activeElement.closest('.sidebar')) addRecord();
+  }
+});
+
+// ── INIT ──
+loadRecords();
+</body>
+</html>
