@@ -506,6 +506,11 @@
           </select>
         </div>
         <div class="form-group">
+          <label>Cidade <span class="req">*</span></label>
+          <input type="text" id="f-cidade" class="form-control" placeholder="Ex: Curitiba">
+        </div>
+
+        <div class="form-group">
           <label>Número de Dias <span class="req">*</span></label>
           <input type="number" id="f-dias" class="form-control" placeholder="Ex: 30" min="1" max="30">
         </div>
@@ -561,7 +566,7 @@
           <thead>
             <tr>
               <th>#</th><th>Nome Completo</th><th>Supervisor</th>
-              <th>Mês</th><th>Dias</th><th>Adiant. Décimo</th><th></th>
+              <th>Cidade</th><th>Mês</th><th>Dias</th><th>Adiant. Décimo</th><th></th>
             </tr>
           </thead>
           <tbody id="table-body"></tbody>
@@ -686,15 +691,17 @@ function addRecord() {
   const nome = document.getElementById('f-nome').value.trim().toUpperCase();
   const supervisor = document.getElementById('f-supervisor').value;
   const mes = document.getElementById('f-mes').value;
+  const cidade = document.getElementById('f-cidade').value.trim().toUpperCase();
   const dias = parseInt(document.getElementById('f-dias').value);
   const decimo = document.querySelector('input[name="decimo"]:checked')?.value || 'Nao';
 
   if (!nome) return showToast('Informe o nome completo.', 'error');
   if (!supervisor) return showToast('Selecione o supervisor.', 'error');
-  if (!mes) return showToast('Selecione o mês.', 'error');
+  if (!mes) return showToast('Selecione o mes.', 'error');
+  if (!cidade) return showToast('Informe a cidade.', 'error');
   if (!dias || dias < 1 || dias > 30) return showToast('Informe um numero de dias valido (1-30).', 'error');
 
-  records.push({ id: Date.now(), nome, supervisor, mes, dias, decimo });
+  records.push({ id: Date.now(), nome, supervisor, mes, cidade, dias, decimo });
   save(); renderAll(); resetForm(); closeAC();
   showToast('Registro adicionado com sucesso!', 'success');
 }
@@ -796,6 +803,7 @@ function renderTable() {
       <td style="color:var(--muted);font-size:.8rem;font-weight:700">${i+1}</td>
       <td class="td-name">${r.nome}</td>
       <td class="td-supervisor">${r.supervisor}</td>
+      <td style="font-weight:600">${r.cidade || '-'}</td>
       <td><span class="mes-tag">${r.mes}</span></td>
       <td style="font-weight:700">${r.dias}d</td>
       <td><span class="badge ${r.decimo==='Sim'?'badge-yes':'badge-no'}">${r.decimo}</span></td>
@@ -813,7 +821,7 @@ function renderCalendar() {
         <div class="cal-entry">
           <div>
             <div class="cal-entry-name">${r.nome}</div>
-            <div style="font-size:.72rem;color:var(--muted);margin-top:1px">${r.supervisor.split(' ')[0]}</div>
+            <div style="font-size:.72rem;color:var(--muted);margin-top:1px">${r.cidade || ''} &bull; ${r.supervisor.split(' ')[0]}</div>
           </div>
           <div class="cal-entry-days">${r.dias}d</div>
         </div>`).join('')
@@ -832,8 +840,8 @@ function exportXLSX() {
   if (!records.length) return showToast('Nenhum registro para exportar.', 'error');
   const sorted = [...records].sort((a,b) => MESES.indexOf(a.mes) - MESES.indexOf(b.mes));
   const data = [
-    ['Nome Completo','Supervisor','Mês','Nº de Dias','Adiantamento de Décimo'],
-    ...sorted.map(r => [r.nome, r.supervisor, r.mes, r.dias, r.decimo])
+    ['Nome Completo','Supervisor','Cidade','Mes','Nr de Dias','Adiantamento de Decimo'],
+    ...sorted.map(r => [r.nome, r.supervisor, r.cidade || '', r.mes, r.dias, r.decimo])
   ];
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet(data);
@@ -846,8 +854,8 @@ function exportXLSX() {
 function copyTable() {
   if (!records.length) return showToast('Nenhum registro para copiar.', 'error');
   const sorted = [...records].sort((a,b) => MESES.indexOf(a.mes) - MESES.indexOf(b.mes));
-  const rows = sorted.map(r => `${r.nome}\t${r.supervisor}\t${r.mes}\t${r.dias}\t${r.decimo}`);
-  navigator.clipboard.writeText(['Nome Completo\tSupervisor\tMês\tNº de Dias\tAdiantamento de Décimo', ...rows].join('\n'))
+  const rows = sorted.map(r => `${r.nome}\t${r.supervisor}\t${r.cidade || ''}\t${r.mes}\t${r.dias}\t${r.decimo}`);
+  navigator.clipboard.writeText(['Nome Completo\tSupervisor\tCidade\tMes\tNr de Dias\tAdiantamento de Decimo', ...rows].join('\n'))
     .then(() => showToast('Tabela copiada! Cole no Excel.', 'success'))
     .catch(() => showToast('Erro ao copiar. Use Exportar XLSX.', 'error'));
 }
@@ -874,6 +882,7 @@ function resetForm() {
   document.getElementById('f-nome').value = '';
   document.getElementById('f-supervisor').value = '';
   document.getElementById('f-mes').value = '';
+  document.getElementById('f-cidade').value = '';
   document.getElementById('f-dias').value = '';
   document.querySelector('input[name="decimo"][value="Nao"]').checked = true;
 }
