@@ -586,21 +586,32 @@
 <!-- MODALS -->
 <div class="modal-overlay" id="modal-delete">
   <div class="modal">
-    <div class="modal-title">⚠️ Confirmar Exclusão</div>
-    <p style="font-size:.9rem;color:var(--muted)">Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.</p>
+    <div class="modal-title">🔒 Confirmar Exclusão</div>
+    <p style="font-size:.9rem;color:var(--muted);margin-bottom:14px">Digite a senha para excluir este registro.</p>
+    <div class="form-group" style="margin-bottom:0">
+      <label>Senha</label>
+      <input type="password" id="senha-delete" class="form-control" placeholder="Digite a senha..." onkeydown="if(event.key==='Enter') confirmDeleteWithPass()">
+    </div>
+    <div id="delete-error" style="color:var(--red);font-size:.8rem;margin-top:6px;display:none">Senha incorreta. Tente novamente.</div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('modal-delete')">Cancelar</button>
-      <button class="btn btn-red" id="confirm-delete-btn">Excluir</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-delete');document.getElementById('senha-delete').value='';document.getElementById('delete-error').style.display='none'">Cancelar</button>
+      <button class="btn btn-red" onclick="confirmDeleteWithPass()">Excluir</button>
     </div>
   </div>
 </div>
+
 <div class="modal-overlay" id="modal-clear">
   <div class="modal">
-    <div class="modal-title">⚠️ Limpar Todos os Registros</div>
-    <p style="font-size:.9rem;color:var(--muted)">Isso irá remover <strong>todos</strong> os registros. Esta ação não pode ser desfeita.</p>
+    <div class="modal-title">🔒 Limpar Todos os Registros</div>
+    <p style="font-size:.9rem;color:var(--muted);margin-bottom:14px">Digite a senha para remover <strong>todos</strong> os registros.</p>
+    <div class="form-group" style="margin-bottom:0">
+      <label>Senha</label>
+      <input type="password" id="senha-clear" class="form-control" placeholder="Digite a senha..." onkeydown="if(event.key==='Enter') confirmClearWithPass()">
+    </div>
+    <div id="clear-error" style="color:var(--red);font-size:.8rem;margin-top:6px;display:none">Senha incorreta. Tente novamente.</div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('modal-clear')">Cancelar</button>
-      <button class="btn btn-red" onclick="clearAll()">Limpar Tudo</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-clear');document.getElementById('senha-clear').value='';document.getElementById('clear-error').style.display='none'">Cancelar</button>
+      <button class="btn btn-red" onclick="confirmClearWithPass()">Limpar Tudo</button>
     </div>
   </div>
 </div>
@@ -706,22 +717,55 @@ function addRecord() {
   showToast('Registro adicionado com sucesso!', 'success');
 }
 
+let deleteTargetId = null;
+
 function askDelete(id) {
-  document.getElementById('confirm-delete-btn').onclick = () => {
-    records = records.filter(r => r.id !== id);
-    save(); renderAll();
-    closeModal('modal-delete');
-    showToast('Registro excluído.', 'success');
-  };
+  deleteTargetId = id;
+  document.getElementById('senha-delete').value = '';
+  document.getElementById('delete-error').style.display = 'none';
   openModal('modal-delete');
+  setTimeout(() => document.getElementById('senha-delete').focus(), 100);
 }
 
-function confirmClearAll() { openModal('modal-clear'); }
-function clearAll() {
+function confirmDeleteWithPass() {
+  const senha = document.getElementById('senha-delete').value;
+  if (senha !== 'everbull') {
+    document.getElementById('delete-error').style.display = 'block';
+    document.getElementById('senha-delete').value = '';
+    document.getElementById('senha-delete').focus();
+    return;
+  }
+  records = records.filter(r => r.id !== deleteTargetId);
+  save(); renderAll();
+  closeModal('modal-delete');
+  document.getElementById('senha-delete').value = '';
+  document.getElementById('delete-error').style.display = 'none';
+  showToast('Registro excluido.', 'success');
+}
+
+function confirmClearAll() {
+  document.getElementById('senha-clear').value = '';
+  document.getElementById('clear-error').style.display = 'none';
+  openModal('modal-clear');
+  setTimeout(() => document.getElementById('senha-clear').focus(), 100);
+}
+
+function confirmClearWithPass() {
+  const senha = document.getElementById('senha-clear').value;
+  if (senha !== 'gustavo') {
+    document.getElementById('clear-error').style.display = 'block';
+    document.getElementById('senha-clear').value = '';
+    document.getElementById('senha-clear').focus();
+    return;
+  }
   records = []; save(); renderAll();
   closeModal('modal-clear');
+  document.getElementById('senha-clear').value = '';
+  document.getElementById('clear-error').style.display = 'none';
   showToast('Todos os registros foram removidos.', 'success');
 }
+
+function clearAll() { confirmClearWithPass(); }
 
 function setFilter(el) {
   document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
